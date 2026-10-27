@@ -1,0 +1,231 @@
+======================================================================
+JAWABAN & ANALISIS SOAL TEBAK OUTPUT (TUGAS 3 - NABILA MONICA)
+======================================================================
+
+
+--- TEBAK 1 ---
+x := 10 
+if x := 3; x > 5 { 
+    fmt.Println("A", x) 
+} else { 
+    fmt.Println("B", x) 
+} 
+fmt.Println("C", x)
+
+Output:
+B 3
+C 10
+
+Penjelasan:
+- Statement 'if x := 3; x > 5' mendefinisikan variabel temporary 'x' bernilai 3 yang hanya berlaku di dalam scope blok if-else.
+- Kondisi (3 > 5) bernilai false, sehingga blok 'if' dilewati dan blok 'else' dijalankan.
+- Blok 'else' mencetak "B" disusul nilai 'x' temporary (3), yaitu "B 3".
+- Setelah keluar dari blok if-else, variabel temporary 'x' hancur. Perintah 'fmt.Println("C", x)' mengakses variabel 'x' utama di luar yang bernilai 10, sehingga mencetak "C 10".
+
+
+
+----------------------------------------------------------------------
+
+
+--- TEBAK 2 ---
+n := 5 
+switch n := 2; n { 
+case 2: 
+    fmt.Println("A", n) 
+    fallthrough
+case 3: 
+    fmt.Println("B", n)
+case 4: 
+    fmt.Println("C", n)
+default:
+    fmt.Println("D", n) 
+} 
+fmt.Println("E", n)
+
+Output:
+A 2
+B 2
+E 5
+
+Penjelasan:
+- Di luar switch terdapat variabel 'n' bernilai 5.
+- Statement 'switch n := 2; n' membuat variabel temporary 'n' bernilai 2 di dalam scope switch.
+- Nilai n (2) cocok dengan 'case 2:', sehingga mengeksekusi 'fmt.Println("A", n)' dan mencetak "A 2".
+- Keyword 'fallthrough' memaksa alur program langsung menerobos masuk mengeksekusi isi blok 'case 3:' tanpa mengecek kondisinya lagi.
+- Blok 'case 3:' dieksekusi dan mencetak "B 2" (menggunakan variabel n temporary yang nilainya 2).
+- Karena 'case 3:' tidak memiliki 'fallthrough', pengecekan switch selesai dan keluar dari blok switch.
+- Perintah terakhir 'fmt.Println("E", n)' mengeksekusi variabel 'n' di luar scope switch yang bernilai 5, sehingga mencetak "E 5".
+
+
+
+----------------------------------------------------------------------
+
+
+--- TEBAK 3 ---
+const level = 1 
+switch level := level + 4; { 
+case level > 3: 
+    fmt.Println("A", level) 
+    fallthrough 
+case level > 10:
+    fmt.Println("B", level) 
+default: 
+    fmt.Println("C", level) 
+} 
+fmt.Println("D", level)
+
+Output:
+A 5
+B 5
+D 1
+
+Penjelasan:
+- Di luar switch terdapat konstanta 'level' bernilai 1.
+- Statement 'switch level := level + 4;' mendefinisikan variabel temporary 'level' bernilai 1 + 4 = 5.
+- Switch tanpa variabel acuan ('switch { ... }') mengevaluasi setiap case sebagai nilai kebenaran boolean (true/false).
+- Evaluasi 'case level > 3:' bernilai true (5 > 3), sehingga mencetak "A 5".
+- Keyword 'fallthrough' memaksa program mengeksekusi blok di bawahnya ('case level > 10:') tanpa mengecek kondisinya, sehingga mencetak "B 5".
+- Switch selesai. Di luar switch, 'fmt.Println("D", level)' mencetak nilai konstanta 'level' asli yaitu 1 ("D 1").
+
+
+
+----------------------------------------------------------------------
+
+
+--- TEBAK 4 ---
+const poin = 50 
+if poin := poin * 2; poin > 100 {
+    fmt.Println("A", poin)
+} else if poin == 100 { 
+    fmt.Println("B", poin) 
+} else { 
+    fmt.Println("C", poin)
+} 
+fmt.Println("D", poin)
+
+Output:
+B 100
+D 50
+
+Penjelasan:
+- Konstanta 'poin' di luar bernilai 50.
+- Statement 'if poin := poin * 2;' membuat variabel temporary 'poin' bernilai 50 * 2 = 100.
+- Syarat pertama 'poin > 100' bernilai false (karena 100 tidak lebih besar dari 100).
+- Program lanjut ke 'else if poin == 100' yang bernilai true (100 == 100).
+- Blok 'else if' dieksekusi dan mencetak "B 100".
+- Setelah keluar dari percabangan if-else, perintah 'fmt.Println("D", poin)' mencetak nilai konstanta 'poin' asli dari luar scope, yaitu "D 50".
+
+
+
+----------------------------------------------------------------------
+
+
+--- TEBAK 5 ---
+a := 1 
+switch a := a + 1; a {
+case 2: 
+    a := a * 10 
+    fmt.Println("A", a) 
+    fallthrough 
+case 3: 
+    fmt.Println("B", a) 
+default: 
+    fmt.Println("C", a) 
+} 
+fmt.Println("D", a)
+
+Output:
+A 20
+B 2
+D 1
+
+Penjelasan:
+- Di luar switch terdapat variabel 'a' bernilai 1.
+- Statement 'switch a := a + 1; a' membuat variabel temporary scope switch 'a' bernilai 2.
+- Nilai a (2) cocok dengan 'case 2:'.
+- Di dalam 'case 2:', dibuat variabel baru lagi di dalam inner scope 'a := a * 10' (2 * 10 = 20), lalu mencetak "A 20".
+- Keyword 'fallthrough' memaksa program menerobos ke 'case 3:'.
+- Pada 'case 3:', variabel inner scope milik 'case 2' sudah hancur/berakhir. Variabel 'a' yang dirujuk kembali ke variabel scope switch (bernilai 2). Maka mencetak "B 2".
+- 'case 3:' tidak memiliki 'fallthrough', sehingga alur switch BERHENTI dan TIDAK MASUK ke blok 'default:'.
+- Di luar switch, 'fmt.Println("D", a)' mencetak variabel 'a' luar asli, yaitu "D 1".
+
+
+
+----------------------------------------------------------------------
+
+
+--- TEBAK 6 ---
+var n int
+fmt.Scanln(&n) 
+if x := n % 5; x == 0 && n > 20 {
+    fmt.Println("Lolos", x)
+} else {
+    fmt.Println("Gagal", x) 
+}
+
+Jawaban Input:
+Lolos 0
+
+Penjelasan:
+- Agar menghasilkan output "Lolos 0", program harus memenuhi syarat blok 'if', yaitu: (x == 0 && n > 20).
+- Variabel 'x' dihitung dari sisa bagi 'n % 5'.
+- Syarat 'x == 0' artinya 'n' harus berupa bilangan yang habis dibagi 5 (kelipatan 5).
+- Syarat 'n > 20' artinya nilai 'n' harus strictly lebih besar dari 20.
+- Angka bulat positif terkecil yang memenuhi kedua syarat tersebut adalah 25.
+
+
+
+----------------------------------------------------------------------
+
+
+--- TEBAK 7 ---
+var a, b int 
+fmt.Scanf("%d %d", &a, &b) 
+switch s := a + b; { 
+case s > 10 && a < b: 
+    fmt.Println("X", s) 
+    fallthrough 
+case s < 0: 
+    fmt.Println("Y") 
+default: 
+    fmt.Println("Z")
+}
+
+Jawaban Input:
+X 12 
+Y
+
+Penjelasan:
+- Agar menghasilkan output "X [hasil_jumlah]" lalu lanjut mencetak "Y", program harus memicu 'case s > 10 && a < b:'.
+- Misalkan diinput angka 5 dan 7 (a = 5, b = 7):
+  1. Nilai s = 5 + 7 = 12.
+  2. Kondisi (12 > 10 && 5 < 7) bernilai true.
+- Program mencetak "X 12".
+- Adanya keyword 'fallthrough' memaksa program mengeksekusi case berikutnya ('case s < 0:') tanpa cek syarat, sehingga mencetak "Y".
+- Setelah keluar dari switch, program selesai (perintah cetak "Z" ada di dalam default, jadi tidak dieksekusi karena switch berhenti di case s < 0).
+
+
+
+----------------------------------------------------------------------
+
+
+--- TEBAK 8 ---
+var kode string 
+fmt.Scan(&kode) 
+switch kode := kode + "!"; kode { 
+case "go!": 
+    fmt.Println("1", kode) 
+case "GO!": 
+    fmt.Println("2", kode) 
+default: 
+    fmt.Println("3", kode) 
+}
+
+Jawaban Input:
+2 GO!
+
+Penjelasan:
+- Agar output menghasilkan "2 GO!", program harus mencocokkan input dengan 'case "GO!":'.
+- Pada switch statement 'switch kode := kode + "!"; kode', string input akan ditambahi karakter '!' di belakangnya.
+- Jika user menginput teks "GO", variabel temporary 'kode' menjadi "GO!".
+- Nilai "GO!" ini persis cocok dengan 'case "GO!":', sehingga mencetak angka 2 beserta isi variabel 'kode' ("2 GO!").
